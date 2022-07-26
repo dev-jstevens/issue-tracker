@@ -45,35 +45,26 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-    organizations: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            organizationTitle: String,
-            ref: "Organizations",
-        },
-    ],
+    organizations: {
+        type: Array,
+        default: [],
+    },
     teamCount: {
         type: Number,
         default: 0,
     },
-    teams: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            teamTitle: String,
-            ref: "Teams",
-        },
-    ],
+    teams: {
+        type: Array,
+        default: [],
+    },
     departmentCount: {
         type: Number,
         default: 0,
     },
-    departments: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            departmentTitle: String,
-            ref: "Departments",
-        },
-    ],
+    departments: {
+        type: Array,
+        default: [],
+    },
     createdOn: {
         type: Date,
         default: Date.now(),

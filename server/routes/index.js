@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const UserRoutes = require("./UserRoutes.js");
+const OrganizationRoutes = require("./OrganizationRoutes.js");
 
 // Test route
 router.get("/", (req, res) => {
@@ -9,5 +10,6 @@ router.get("/", (req, res) => {
 });
 
 router.use("/users", UserRoutes);
+router.use("/organizations", OrganizationRoutes);
 
 module.exports = router;
