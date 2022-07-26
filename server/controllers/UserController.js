@@ -114,10 +114,64 @@ const loginUser = (async (req, res) => {
 });
 
 // Get all users
-// GET /api/users - GET ALL USERS
+// GET /api/users/getAll - GET ALL USERS
+const getAllUsers = (async (req, res) => {
+  try {
+    const users = await User.find();
 
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Get one user
+// GET /api/users/getOne/:id - GET ONE USER
+const getOneUser = (async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Update one user
+// PATCH /api/users/updateOne/:id - UPDATE ONE USER
+const updateOneUser = (async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedData = req.body;
+    const options = { new: true };
+
+    const result = await User.findByIdAndUpdate(
+      userId, updatedData, options
+    );
+
+    res.status(200).send(result);
+  } catch (err) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Delete one user
+// DELETE /api/users/deleteOne/:id - DELETE ONE USER
+const deleteOneUser = (async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const userData = await User.findByIdAndDelete(userId);
+    res.status(204).send(`Document with email ${userData.email} has been deleted.`);
+  } catch (err) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getAllUsers,
+    getOneUser,
+    updateOneUser,
+    deleteOneUser
 }
