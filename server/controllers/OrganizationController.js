@@ -133,7 +133,7 @@ const updateOneOrganization = (async (req, res) => {
 });
 
 // Add member to organization
-// PUT /api/addMember/:id - ADD A MEMBER TO ORGANIZATION
+// PUT /api/organizations/addMember/:id - ADD A MEMBER TO ORGANIZATION
 const addMember = (async (req, res) => {
     try {
         const {
@@ -193,7 +193,7 @@ const addMember = (async (req, res) => {
 });
 
 // Remove member of organization
-// PUT /api/removeMember/:id - REMOVE A MEMBER OF ORGANIZATION
+// PUT /api/organizations/removeMember/:id - REMOVE A MEMBER OF ORGANIZATION
 const removeMember = (async (req, res) => {
     try {
         const {

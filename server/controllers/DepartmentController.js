@@ -2,30 +2,30 @@
 
 const validation = require("../middleware/validation.js");
 
-const Team = require("../models/TeamModel.js");
+const Department = require("../models/DepartmentModel.js");
 
-const { TEAM_SCHEMA_VERSION } = process.env;
+const { DEPARTMENT_SCHEMA_VERSION } = process.env;
 
-// Create a team
-// POST /api/teams/create - CREATE A TEAM
-const createTeam = (async (req, res) => {
+// Create a department
+// POST /api/departments/create - CREATE A DEPARTMENT
+const createDepartment = (async (req, res) => {
     try {
         const {
             title,
             organizationId,
-            teamLead,
+            departmentHead,
             userFirstName,
             userLastName
         } = req.body;
     
-        const inputArr = [ title, organizationId, teamLead, userFirstName, userLastName ];
+        const inputArr = [ title, organizationId, departmentHead, userFirstName, userLastName ];
     
         if(!(validation.hasValues(inputArr))) {
             return res.status(400).send("400 - BAD REQUEST. All input is required.");
         }
 
         if(!(validation.isValidObjectId(organizationId) 
-        && validation.isValidObjectId(teamLead))) {
+        && validation.isValidObjectId(departmentHead))) {
             return res.status(400).send("400 - BAD REQUEST. Invalid id.");
         }
 
@@ -34,76 +34,76 @@ const createTeam = (async (req, res) => {
         }
 
         const member = {
-            userId: teamLead,
+            userId: departmentHead,
             firstName: userFirstName,
             lastName: userLastName
         };
 
-        // Create the team in the database
-        const team = await Team.create({
-            schemaVersion: TEAM_SCHEMA_VERSION,
+        // Create the department in the database
+        const department = await Department.create({
+            schemaVersion: DEPARTMENT_SCHEMA_VERSION,
             title: title,
             organizationId: organizationId,
-            teamLead: teamLead,
+            departmentHead: departmentHead,
             memberCount: 1,
             members: member
         });
 
-        // Return new team
-        res.status(201).json(team);
+        // Return new department
+        res.status(201).json(department);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// Retrieve all teams
-// GET /api/teams/getAll - GET ALL TEAMS
-const getAllTeams = (async (req, res) => {
+// Retrieve all departments
+// GET /api/departments/getAll - GET ALL DEPARTMENTS
+const getAllDepartments = (async (req, res) => {
     try {
-        const teams = await Team.find();
+        const departments = await Department.find();
 
-        res.status(200).json(teams);
+        res.status(200).json(departments);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// Retrieve one team
-// GET /api/teams/getOne/:id - GET ONE TEAM
-const getOneTeam = (async (req, res) => {
+// Retrieve one department
+// GET /api/departments/getOne/:id - GET ONE DEPARTMENT
+const getOneDepartment = (async (req, res) => {
     try {
         if(!(validation.isValidObjectId(req.params.id))) {
             return res.status(400).send("400 - BAD REQUEST. Invalid id.");
         }
 
-        const team = await Team.findById(req.params.id);
+        const department = await Department.findById(req.params.id);
 
-        res.status(200).json(team);
+        res.status(200).json(department);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
-// Update one team
-// PATCH /api/teams/updateOne/:id - UPDATE ONE TEAM
-const updateOneTeam = (async (req, res) => {
+// Update one department
+// PATCH /api/departments/updateOne/:id - UPDATE ONE DEPARTMENT
+const updateOneDepartment = (async (req, res) => {
     try {
-      const teamId = req.params.id;
+      const departmentId = req.params.id;
       const updatedData = req.body;
       const options = { new: true };
   
-      const team = await Team.findByIdAndUpdate(
-        teamId, updatedData, options
+      const department = await Department.findByIdAndUpdate(
+        departmentId, updatedData, options
       );
   
-      res.status(200).send(team);
+      res.status(200).send(department);
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
 });
 
-// Add member to team
-// PUT /api/teams/addMember/:id - ADD A MEMBER TO TEAM
+// Add member to department
+// PUT /api/departments/addMember/:id - ADD A MEMBER TO DEPARTMENT
 const addMember = (async (req, res) => {
     try {
         const {
@@ -143,7 +143,7 @@ const addMember = (async (req, res) => {
             lastName: userLastName,
         };
 
-        const team = await Team.findOneAndUpdate(
+        const department = await Department.findOneAndUpdate(
             { _id: req.params.id, },
             { 
                 $push: { members: member, },
@@ -152,14 +152,14 @@ const addMember = (async (req, res) => {
             { new: true }
         );
 
-        res.status(200).json(team);
+        res.status(200).json(department);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
 
-// Remove member from team
-// PUT /api/teams/removeMember/:id - REMOVE A MEMBER FROM TEAM
+// Remove member from department
+// PUT /api/departments/removeMember/:id - REMOVE A MEMBER FROM DEPARTMENT
 const removeMember = (async (req, res) => {
     try {
         const {
@@ -199,7 +199,7 @@ const removeMember = (async (req, res) => {
             lastName: userLastName,
         };
 
-        const team = await Team.findOneAndUpdate(
+        const department = await Department.findOneAndUpdate(
             { _id: req.params.id, },
             { 
                 $pull: { members: member, },
@@ -208,30 +208,30 @@ const removeMember = (async (req, res) => {
             { new: true }
         );
 
-        res.status(200).json(team);
+        res.status(200).json(department);
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
 });
 
-// Delete one team
-// DELETE /api/teams/deleteOne/:id - DELETE ONE TEAM
-const deleteOneTeam = (async (req, res) => {
+// Delete one departments
+// DELETE /api/departments/deleteOne/:id - DELETE ONE DEPARTMENT
+const deleteOneDepartment = (async (req, res) => {
     try {
-      const teamId = req.params.id;
-      const teamData = await Team.findByIdAndDelete(teamId);
-      res.status(204).send(`Document with title ${teamData.title} has been deleted.`);
+      const departmentId = req.params.id;
+      const departmentData = await Department.findByIdAndDelete(departmentId);
+      res.status(204).send(`Document with id ${departmentId} has been deleted.`);
     } catch (err) {
       res.status(400).json({ message: err.message });
     }
 });
 
 module.exports = {
-    createTeam,
-    getAllTeams,
-    getOneTeam,
-    updateOneTeam,
+    createDepartment,
+    getAllDepartments,
+    getOneDepartment,
+    updateOneDepartment,
     addMember,
     removeMember,
-    deleteOneTeam
+    deleteOneDepartment
 }
