@@ -1,51 +1,39 @@
 const mongoose = require("mongoose");
 
+const reqString = {
+    type: String,
+    required: true,
+};
+
+const reqId = {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+};
+
+const defaultCount = {
+    type: Number,
+    default: 0,
+};
+
+// Objects should have the form:
+// id: mongoose.Schema.Types.ObjectId
+// name/title: string
+const defaultArray = {
+    type: Array,
+    default: [],
+};
+
 const TeamSchema = new mongoose.Schema({
-    schemaVersion: {
-        type: Number,
-        required: true,
-    },
-    title: {
-        type: String,
-        required: true,
-    },
-    teamLead: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
-    memberCount: {
-        type: Number,
-        default: 0,
-    },
-    members: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            username: String,
-            ref: "Users"
-        },
-    ],
-    projectCount: {
-        type: Number,
-        default: 0,
-    },
-    projects: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            projectName: String,
-            ref: "Projects",
-        },
-    ],
-    operationCount: {
-        type: Number,
-        default: 0,
-    },
-    operations: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            operationName: String,
-            ref: "Operations",
-        },
-    ],
+    schemaVersion: reqString,
+    title: reqString,
+    organizationId: reqId,
+    teamLead: reqId,
+    memberCount: defaultCount,
+    members: defaultArray,
+    projectCount: defaultCount,
+    projects: defaultArray,
+    operationCount: defaultCount,
+    operations: defaultArray,
     createdOn: {
         type: Date,
         default: Date.now(),

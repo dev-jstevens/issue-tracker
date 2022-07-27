@@ -8,6 +8,7 @@ const {
     getOrganizationByName,
     updateOneOrganization,
     addMember,
+    removeMember,
     deleteOneOrganization
 } = require("../controllers/OrganizationController.js");
 
@@ -17,6 +18,7 @@ router.get("/getOne/:id", getOneOrganization);
 router.get("/getOneByName/:name", getOrganizationByName);
 router.patch("/updateOne/:id", updateOneOrganization);
 router.put("/addMember/:id", addMember);
+router.put("/removeMember/:id", removeMember);
 router.delete("/deleteOne/:id", deleteOneOrganization);
 
 module.exports = router;

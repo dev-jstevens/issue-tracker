@@ -1,3 +1,5 @@
+const validation = require("../middleware/validation.js");
+
 const Organization = require("../models/OrganizationModel.js");
 
 const { ORGANIZATION_SCHEMA_VERSION } = process.env;
@@ -45,7 +47,7 @@ const createOrganization = (async (req, res) => {
             return res.status(409).send("Organization already exists. Search organization to join.");
         }
 
-        // Create organization in our database
+        // Create organization in the database
         const organization = await Organization.create({
             schemaVersion: ORGANIZATION_SCHEMA_VERSION,
             title,
@@ -88,6 +90,8 @@ const getAllOrganizations = (async (req, res) => {
 // GET /api/organizations/getOne/:id - GET ONE ORGANIZATION
 const getOneOrganization = (async (req, res) => {
     try {
+        console.log(typeof req.params.id);
+
         const organization = await Organization.findById(req.params.id);
 
         res.status(200).json(organization);
@@ -128,37 +132,125 @@ const updateOneOrganization = (async (req, res) => {
     }
 });
 
-// +----------------------NOT WORKING YET----------------------+ 
 // Add member to organization
 // PUT /api/addMember/:id - ADD A MEMBER TO ORGANIZATION
-// const addMember = (async (req, res) => {
-//     try {
-//         const {
-//             id,
-//             userId,
-//             userFirstName,
-//             userLastName,
-//             userRole
-//         } = req.body;
+const addMember = (async (req, res) => {
+    try {
+        const {
+            userId,
+            userFirstName,
+            userLastName,
+            userRole
+        } = req.body;
 
-//         const member = {
-//             userId: userId,
-//             firstName: userFirstName,
-//             lastName: userLastName,
-//             role: userRole
-//         };
+        const inputArr = [
+            req.params.id,
+            userId,
+            userFirstName,
+            userLastName,
+            userRole
+        ];
 
-//         const organization = await Organization.updateOne(
-//             { _id: id },
-//             { $push: { members: member } },
-//             done
-//         );
+        const checkStrArr = [
+            userFirstName,
+            userLastName,
+            userRole
+        ];
 
-//         res.status(200).json(organization);
-//     } catch (err) {
-//         res.status(400).json({ message: error.message });
-//     }
-// });
+        if(!(validation.hasValues(inputArr))) {
+            return res.status(400).send("400 - BAD REQUEST. All input is required.");
+        }
+
+        if(!(validation.isValidObjectId(req.params.id) 
+        && validation.isValidObjectId(userId))) {
+            return res.status(400).send("400 - BAD REQUEST. Invalid id.");
+        }
+        
+        if(!(validation.allStrings(checkStrArr))) {
+            return res.status(400).send("400 - BAD REQUEST. Input must be of type string.");
+        }
+
+        const member = {
+            userId: userId,
+            firstName: userFirstName,
+            lastName: userLastName,
+            role: userRole
+        };
+
+        const organization = await Organization.findOneAndUpdate(
+            { _id: req.params.id, },
+            { 
+                $push: { members: member, },
+                $inc: { memberCount: 1 }, 
+            },
+            { new: true }
+        );
+
+        res.status(200).json(organization);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
+
+// Remove member of organization
+// PUT /api/removeMember/:id - REMOVE A MEMBER OF ORGANIZATION
+const removeMember = (async (req, res) => {
+    try {
+        const {
+            userId,
+            userFirstName,
+            userLastName,
+            userRole
+        } = req.body;
+
+        const inputArr = [
+            req.params.id,
+            userId,
+            userFirstName,
+            userLastName,
+            userRole
+        ];
+        
+        const checkStrArr = [
+            userFirstName,
+            userLastName,
+            userRole
+        ];
+
+        if(!(validation.hasValues(inputArr))) {
+            return res.status(400).send("400 - BAD REQUEST. All input is required.");
+        }
+
+        if(!(validation.isValidObjectId(req.params.id) 
+        && validation.isValidObjectId(userId))) {
+            return res.status(400).send("400 - BAD REQUEST. Invalid id.");
+        }
+
+        if(!(validation.allStrings(inputArr))) {
+            return res.status(400).send("400 - BAD REQUEST. Input must be of type string.");
+        }
+
+        const member = {
+            userId: userId,
+            firstName: userFirstName,
+            lastName: userLastName,
+            role: userRole
+        };
+
+        const organization = await Organization.findOneAndUpdate(
+            { _id: req.params.id, },
+            { 
+                $pull: { members: member, },
+                $inc: { memberCount: -1 }, 
+            },
+            { new: true }
+        );
+
+        res.status(200).json(organization);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+});
 
 // Delete one organization
 // DELETE /api/organizations/deleteOne/:id - DELETE ONE ORGANIZATION
@@ -179,5 +271,6 @@ module.exports = {
     getOrganizationByName,
     updateOneOrganization,
     addMember,
+    removeMember,
     deleteOneOrganization
 }
