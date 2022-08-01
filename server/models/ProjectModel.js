@@ -1,59 +1,45 @@
 const mongoose = require("mongoose");
 
+const reqString = {
+    type: String,
+    required: true,
+};
+
+const reqId = {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+};
+
+const reqDate = {
+    type: Date,
+    required: true,
+}
+
+const defaultCount = {
+    type: Number,
+    default: 0,
+};
+
+// Objects should have the form:
+// id: mongoose.Schema.Types.ObjectId
+// name/title: string
+const defaultArray = {
+    type: Array,
+    default: [],
+};
+
 const ProjectSchema = new mongoose.Schema({
-    schemaVersion: {
-        type: Number,
-        required: true,
-    },
-    title: {
-        type: String,
-        required: true,
-    },
-    startDate: {
-        type: Date,
-        required: true,
-    },
-    endDate: {
-        type: Date,
-        required: true,
-    },
-    responsible: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
-    teamCount: {
-        type: Number,
-        default: 0,
-    },
-    teams: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            teamTitle: String,
-            ref: "Teams",
-        },
-    ],
-    departmentCount: {
-        type: Number,
-        default: 0,
-    },
-    departments: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            departmentTitle: String,
-            ref: "Departments",
-        },
-    ],
-    ticketCount: {
-        type: Number,
-        default: 0,
-    },
-    tickets: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ticketSubject: String,
-            ref: "Tickets",
-        },
-    ],
+    schemaVersion: reqString,
+    title: reqString,
+    responsible: reqId,
+    startDate: reqDate,
+    endDate: reqDate,
+    teamCount: defaultCount,
+    teams: defaultArray,
+    departmentCount: defaultCount,
+    departments: defaultArray,
+    ticketCount: defaultCount,
+    tickets: defaultArray,
     createdOn: {
         type: Date,
         default: Date.now(),

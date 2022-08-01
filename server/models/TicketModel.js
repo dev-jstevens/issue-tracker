@@ -1,18 +1,32 @@
 const mongoose = require("mongoose");
 
+const reqString = {
+    type: String,
+    required: true,
+};
+
+const reqId = {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+};
+
+const defaultCount = {
+    type: Number,
+    default: 0,
+};
+
+// Objects should have the form:
+// id: mongoose.Schema.Types.ObjectId
+// name/title: string
+const defaultArray = {
+    type: Array,
+    default: [],
+};
+
 const TicketSchema = new mongoose.Schema({
-    schemaVersion: {
-        type: Number,
-        required: true,
-    },
-    subject: {
-        type: String,
-        required: true,
-    },
-    submittedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
+    schemaVersion: reqString,
+    subject: reqString,
+    submittedBy: reqId,
     hasDeadline: {
         type: Boolean,
         required: true,
@@ -22,29 +36,24 @@ const TicketSchema = new mongoose.Schema({
     },
     isOverdue: {
         type: Boolean,
+        default: false,
     },
-    relatedTo: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-    },
-    description: [
-        {
-            timestamp: Date,
-            submitter: mongoose.Schema.Types.ObjectId,
-            body: String,
-        },
-    ],
+    relatedTo: reqId,
+    // Description
+    // timestamp: Date
+    // submitter: mongoose.Schema.Types.ObjectId
+    // body: String
+    description: defaultArray,
     status: {
         type: String,
         default: "New",
     },
-    assignedTo: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            username: String,
-            ref: "Users",
-        },
-    ],
+    userCount: defaultCount,
+    assignedUsers: defaultArray,
+    teamCount: defaultCount,
+    assignedTeams: defaultArray,
+    departmentCount: defaultCount,
+    assignedDepartments: defaultArray,
     createdOn: {
         type: Date,
         default: Date.now(),
